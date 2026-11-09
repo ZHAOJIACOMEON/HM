@@ -110,6 +110,121 @@
 # 6. 额外定义一个方法,用于执行不自动提交的sql
 # 7. 额外定义一个方法,用于检查指标表师范在指定库中存在
 # 8. 额外定义一个方法,用于检查表如果不存在的话直接创建表
+import pymysql
+
+
+class OptDataBase(object):
+    def __init__(self, host='localhost', port=3306, user='root', password='', autocommit=False):
+        # 初始化连接对象
+        self.conn = pymysql.connect(
+            host=host,
+            port=port,
+            user=user,
+            password=password,
+            autocommit=autocommit
+        )
+
+    def choose_database(self, db):
+        # 选择数据库的方法
+        self.conn.select_db(db)
+
+    def find_all_data(self, sql):
+        # 查询所有数据
+        cur = self.conn.cursor()
+        cur.execute(sql)
+        res = cur.fetchall()
+
+        cur.close()
+        return res
+
+    def get_current_db(self):
+        # 查看当前连接选中的库名
+        return self.find_all_data('select database()')
+
+    def opt_data(self, sql):
+        # 增删改方法,设置直接提交
+        try:
+            cur = self.conn.cursor()
+            cur.execute(sql)
+            # 基于连接对象-提交
+            self.conn.commit()
+            cur.close()
+        except:
+            self.conn.rollback()
+
+    def close_conn(self):
+        # 关闭连接对象的方法
+        self.conn.close()
+
+    def no_auto_commit(self, sql):
+        # 执行不自动提交的sql
+        try:
+            cur = self.conn.cursor()
+            cur.execute(sql)
+            # 基于连接对象-提交
+            # self.conn.commit()
+            cur.close()
+        except:
+            self.conn.rollback()
+
+    def check_table_exists(self, db_name, table_name):
+        # 检查指标表是否在指定库中存在
+        self.choose_database(db_name)
+        res = self.find_all_data('show tables')
+        return (table_name,) in res
+
+    def create_table(self, db_name, table_name, create_cols):
+        # 检查表如果不存在的话直接创建表
+        if not self.check_table_exists(db_name, table_name):
+            # 拼接ql语句
+            sql = f'create table {table_name}({create_cols})'
+            # 执行sql语句
+            self.no_auto_commit(sql)
+
+
+# 创建工具类对象
+db_util = OptDataBase()
+
+# 测试工具类功能1: 创建数据库
+# db_util.no_auto_commit('CREATE DATABASE IF NOT EXISTS test_a')
+
+# 测试工具类功能2:  选择数据库
+# db_util.choose_database('new_db')
+# print(db_util.get_current_db())    # (('new_db',),)
+
+# 测试工具类功能3:  判断monitor表是否在库中存在
+# print(db_util.check_table_exists('my_db', 'monitor'))
+# False
+
+# 测试工具类功能4:  表如果在库中不存在,就直接创建该表
+# CREATE_COLS = """
+#     id INT PRIMARY KEY AUTO_INCREMENT,
+#     file_name VARCHAR(255) UNIQUE NOT NULL COMMENT '被处理的文件名称',
+#     process_lines INT COMMENT '本文件中有多少条数据被处理',
+#     process_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '处理时间'
+# """
+# db_util.create_table('my_db', 'monitor', CREATE_COLS)
+
+# 测试工具类功能5:  往表中插入数据
+# insert_sql = 'insert into monitor(file_name, process_lines) values ("../data/orders_json/x03",1024)'
+# db_util.opt_data(insert_sql)
+
+# 测试工具类功能6:  在表中删除数据
+# delete_sql = 'delete from monitor where id = 3'
+# db_util.opt_data(delete_sql)
+
+# 测试工具类功能7:  在表中修改数据
+# update_sql = 'update monitor set process_lines = 666 where id = 1'
+# db_util.opt_data(update_sql)
+
+# 测试工具类功能8:  查询表中数据
+# select_sql = 'select * from monitor'
+# result = db_util.find_all_data(select_sql)
+# print(result)
+# ((1, '../data/orders_json/x01', 666, datetime.datetime(2026, 11, 9, 20, 50, 4)), (2, '../data/orders_json/x02', 1024, datetime.datetime(2026, 11, 9, 20, 51, 11)))
+
+# 测试工具类功能9:  关闭操作
+db_util.close_conn()
 
 ## 面试题
 # 已知需求:  自己创建一个数据库,里面有user表,用于存储用户名密码(咱们直接写固定  用户名root 密码123456   )
