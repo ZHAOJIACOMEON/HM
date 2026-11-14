@@ -19,6 +19,7 @@
 uvicorn main:app --reload    --reload：更改代码后自动重启服务器
 uv run fastapi dev
 '''
+
 # 3. `--reload` 参数解决了开发中的什么痛点？
 # 更改代码后自动重启服务器
 
@@ -179,14 +180,72 @@ async def employee(
 # ## 第12题：响应类型 - HTML（编程）
 # 某系统的维护公告接口 `/notice`，在装饰器中设置响应类为 `HTMLResponse`，返回一段 HTML 内容：包含一个 `<h1>`
 # 标题（如"系统公告"）和一个 `<p>` 段落（如维护时间说明）。
+'''
+from fastapi.responses import HTMLResponse
+@app.get("/notice", response_class=HTMLResponse)
+async def notice():
+    return "<h1>系统公告</h1><p>维护时间说明……</p>"
+'''
 
 # ## 第13题：响应类型 - 文件（编程）
 # 某数据平台提供月报下载接口 `/report`，使用 `FileResponse` 返回一个 PDF 文件（文件名 `monthly_report.pdf`）供客户端下载。
+'''
+from fastapi.responses import FileResponse
+@app.get("/report")
+async def report():
+    file = '../monthly_report.pdf'
+    return FileResponse(file)
+'''
 
 # ## 第14题：自定义响应格式 response_model（编程）
 # 某商品详情接口 `/product/{id}`，使用 `response_model` 约束响应输出格式。定义 Pydantic 模型 `ProductResponse`，
 # 包含字段：`id`（整数）、`name`（字符串）、`price`（浮点数）、`stock`（整数）。接口返回符合该模型的数据。
+'''
+from pydantic import BaseModel
+from fastapi import FastAPI
+
+app = FastAPI()
+
+class Product(BaseModel):
+    id: int
+    name: str
+    price: float
+    stock: int
+
+@app.get("/product/{id}", response_model=Product)
+async def product(id: int, name: str, price: float, stock: int):
+    return {
+        "id": id,
+        "name": f'这是id为：{id},name为：{name}',
+        "price": price,
+        "stock": stock
+    }
+# {
+#   "id": 1,
+#   "name": "这是id为：1,name为：2",
+#   "price": 3,
+#   "stock": 4
+# }
+'''
 
 # ## 第15题：异常处理 HTTPException（编程）
 # 某库存查询接口 `/stock/{id}`，当库存数量（假设固定为某值）小于等于 0 时，使用 `HTTPException` 抛出 400 异常，
 # detail 为 `"库存不足"`；库存大于 0 时正常返回商品库存信息。
+'''
+from fastapi import FastAPI, HTTPException
+
+app = FastAPI()
+
+@app.get("/stock/{id}")
+async def stock(id: int):
+    if id <= 0:
+        raise HTTPException(status_code=400, detail=f'库存不足')
+
+    return {
+        "user_id": f'这是您查询的库存id参数: {id}'
+    }
+# 打印输出
+# {
+#   "user_id": "这是您查询的库存id参数: 10"
+# }
+'''
