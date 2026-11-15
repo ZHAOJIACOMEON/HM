@@ -365,15 +365,134 @@ async def get_goods(
 
 # ## 第9题：条件查询 - 比较判断（编程）
 # 定义接口 `GET /goods/price/{min_price}/{max_price}`，查询价格在 `min_price` 到 `max_price` 之间的商品。使用 `select(Goods).where(Goods.price >= min_price, Goods.price <= max_price)` 实现比较条件查询。
+'''
+# 承接上面通用方法 续写
+@app.get('/goods/price')
+async def check_goods_by(
+        min_price: int,
+        max_price: int,
+        db: Annotated[AsyncSession, Depends(get_database)]
+):
+    stmt = select(Goods).where(Goods.price >= min_price, Goods.price <= max_price)
+    res = await db.execute(stmt)
+
+    result = res.scalars().all()
+
+    return result
+
+# [
+#   {
+#     "category": 1,
+#     "stock": 8,
+#     "id": 1,
+#     "update_time": "2026-11-14T20:20:48",
+#     "name": "华为手机",
+#     "price": 8999.99,
+#     "create_time": "2026-11-14T20:20:36"
+#   },
+#   {
+#     "category": 2,
+#     "stock": 20,
+#     "id": 4,
+#     "update_time": "2026-11-15T10:09:49",
+#     "name": "CPB",
+#     "price": 2100,
+#     "create_time": "2026-11-15T10:09:17"
+#   },
+#   {
+#     "category": 3,
+#     "stock": 88,
+#     "id": 6,
+#     "update_time": "2026-11-15T10:10:11",
+#     "name": "海蓝之谜",
+#     "price": 2199,
+#     "create_time": "2026-11-15T10:10:09"
+#   }
+# ]
+'''
 
 # ## 第10题：条件查询 - 模糊查询（编程）
 # 定义接口 `GET /goods/search/{keyword}`，根据商品名称进行模糊搜索。使用 `like()` 方法，`%` 匹配任意字符，查询名称中包含 `keyword` 的商品。
+'''
+# 承接上面通用方法 续写
+@app.get('/goods/search')
+async def goods_search(
+        keyword: str,
+        db: Annotated[AsyncSession, Depends(get_database)]
+):
+    stmt = select(Goods).where(Goods.name.like(f'{keyword}%'))
+    res = await db.execute(stmt)
+
+    result = res.scalars().all()
+
+    return result
+
+# http://127.0.0.1:8000/goods/search?keyword=%E6%B5%B7
+# [
+#   {
+#     "category": 3,
+#     "stock": 88,
+#     "id": 6,
+#     "update_time": "2026-11-15T10:10:11",
+#     "name": "海蓝之谜",
+#     "price": 2199,
+#     "create_time": "2026-11-15T10:10:09"
+#   },
+#   {
+#     "category": 4,
+#     "stock": 8,
+#     "id": 7,
+#     "update_time": "2026-11-15T10:17:28",
+#     "name": "海蓝调鸡尾酒",
+#     "price": 99,
+#     "create_time": "2026-11-15T10:17:26"
+#   }
+# ]
+'''
 
 # ## 第11题：条件查询 - 与非查询（编程）
 # 定义接口 `GET /goods/filter`，查询**库存大于 0 且价格小于 100** 的商品。使用 `&`（与）组合两个条件。再定义一个接口查询**价格不低于 50 或分类为"电子"**的商品，使用 `|`（或）组合条件。
+'''
+# 承接上面通用方法 续写
+
+# 库存大于 0 且价格小于 100
+@app.get('/goods/filter')
+async def filter(
+        db: Annotated[AsyncSession, Depends(get_database)]
+):
+    stmt = select(Goods).where(Goods.stock >0, Goods.stock < 100)
+    res = await db.execute(stmt)
+
+    result = res.scalars().all()
+    return result
+
+# 价格不低于 50 或分类为2
+@app.get('/goods/check_by_condition')
+async def check_by_condition(
+        db: Annotated[AsyncSession, Depends(get_database)]
+):
+    stmt = select(Goods).where((Goods.price >= 50) & (Goods.category == 2) )
+    res = await db.execute(stmt)
+    result = res.scalars().all()
+    return result
+'''
 
 # ## 第12题：条件查询 - 包含查询（编程）
 # 定义接口 `GET /goods/category`，接收一个查询参数 `categories`（如 `"电子,食品,图书"`），将其拆分为列表后，使用 `in_()` 查询分类在指定列表中的商品。
+'''
+# 承接上面通用方法 续写
+
+# 接收一个查询参数 `categories 使用 `in_()` 查询分类
+@app.get('/goods/category')
+async def check_category(
+        db: Annotated[AsyncSession, Depends(get_database)]
+):
+    categories_list = [4,5]
+    stmt = select(Goods).where(Goods.category.in_(categories_list))
+    res = await db.execute(stmt)
+    result = res.scalars().all()
+    return result
+'''
 
 # ## 第13题：聚合查询（编程）
 # 定义接口 `GET /goods/stats`，使用 `func` 聚合查询返回商品的统计信息：
@@ -381,15 +500,119 @@ async def get_goods(
 # - 平均价格（`func.avg()`）
 # - 最高价格（`func.max()`）
 # - 最低价格（`func.min()`）
+'''
+# 承接上面通用方法 续写
+
+@app.get('/goods/stats')
+async def goods_stats(
+        db: Annotated[AsyncSession, Depends(get_database)]
+):
+    # 商品总数（`func.count()`）
+    stmt = select(func.count(Goods.price))
+    # 平均价格（`func.avg()`）
+    stmt = select(func.avg(Goods.price))
+    # 最高价格（`func.max()`）
+    stmt = select(func.max(Goods.price))
+    # 最低价格（`func.min()`）
+    stmt = select(func.min(Goods.price))
+    
+    res = await db.execute(stmt)
+    result = res.scalars().all()
+    return result
+'''
 
 # ## 第14题：分页查询（编程）
 # 定义接口 `GET /goods/page`，携带查询参数 `page`（页码，默认 1）和 `size`（每页数量，默认 10）。使用 `offset().limit()` 实现分页查询，offset 值 = (当前页码 - 1) × 每页数量。
+'''
+# 承接上面通用方法 续写
+
+@app.get('/goods/page')
+async def goods_page(
+        db: Annotated[AsyncSession, Depends(get_database)],
+        page: int = 1,
+        page_size: int = 10
+):
+    offset_num = (page - 1)*page_size
+    stmt = select(Goods).offset(offset_num).limit(page_size)
+    res = await db.execute(stmt)
+    result = res.scalars().all()
+    return result
+'''
 
 # ## 第15题：新增数据（编程）
 # 定义 Pydantic 模型 `GoodsCreate`（name、category、price、stock），接口 `POST /goods` 接收请求体。使用 `model_dump()` 将 Pydantic 模型转为 ORM 对象，通过 `add()` 添加到事务，`commit()` 提交到数据库。
+'''
+# 承接上面通用方法 续写
+
+class Addgood(BaseModel):
+    name: str
+    category: int
+    price: float
+    stock: int
+    create_time: datetime
+    update_time: datetime
+
+@app.post('/goods/add_good')
+async def add_good(
+        good: Addgood,
+        db: Annotated[AsyncSession, Depends(get_database)]
+):
+    good_orm = Goods(**good.__dict__)  # **字典  = 拆包(输出散装键值对)
+    db.add(good_orm)
+    await db.commit()
+
+    return good
+'''
 
 # ## 第16题：修改数据（编程）
 # 定义接口 `PUT /goods/{goods_id}`，先通过 `db.get()` 查询商品，再对属性重新赋值（修改名称和价格），最后 `commit()` 提交。如果商品不存在，抛出 404 异常。
+'''
+# 承接上面通用方法 续写
+
+class UpdateGoods(BaseModel):
+    name: str
+    category: int
+    price: float
+    
+@app.put('/goods/{goods_id}')
+async def update_good_by_id(
+        goods_id: int,
+        data: UpdateGoods,
+        db: Annotated[AsyncSession, Depends(get_database)]
+):
+    good = await db.get(Goods, goods_id)
+    if good is None:
+        raise HTTPException(status_code=404, detail='查询的商品id不存在')
+
+    good.name = data.name
+    good.category = data.category
+    good.price = data.price
+
+    # 3.提交
+    await db.commit()
+
+    # 4.返回
+    return good
+'''
 
 # ## 第17题：删除数据（编程）
 # 定义接口 `DELETE /goods/{goods_id}`，先通过 `db.get()` 查询商品，再使用 `db.delete()` 删除该商品，最后 `commit()` 提交。如果商品不存在，抛出 404 异常。
+'''
+# 承接上面通用方法 续写
+
+@app.delete('/goods/{goods_id}')
+async def delete_good_by_id(
+        goods_id: int,
+        db: Annotated[AsyncSession, Depends(get_database)]
+):
+    good = await db.get(Goods, goods_id)
+
+    if good is None:
+        raise HTTPException(status_code=404, detail='要删除的商品id不存在，请检查～')
+
+    await db.delete(good)
+
+    await db.commit()
+
+    return {'message': f'id为{goods_id}的商品删除成功'}
+'''
