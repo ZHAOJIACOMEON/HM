@@ -1,0 +1,53 @@
+.root {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.sun,
+.cloud {
+  position: absolute;
+  transition: opacity 800ms ease-in-out, transform 800ms ease-in-out;
+}
+
+.sun {
+  top: 8%;
+  left: 13%;
+  width: clamp(72px, 8vw, 132px);
+  opacity: 0;
+  transform: translate(-30px, -90px) scale(0.82);
+}
+.day .sun { opacity: 1; transform: translate(0, 0) scale(1); }
+
+.cloud svg { display: block; }
+.cloud { opacity: 0; }
+
+.day .cloud { opacity: 0.82; }
+.night .cloud { opacity: 0; }
+
+.cloudA { top: 17%; left: 48%; }
+.day .cloudA { animation: drift 26s ease-in-out infinite alternate; }
+
+.cloudB { top: 30%; left: 76%; }
+.day .cloudB { animation: drift 34s ease-in-out infinite alternate-reverse; }
+
+.cloudC { top: 41%; left: 24%; }
+.day .cloudC { animation: drift 42s ease-in-out infinite alternate; }
+
+@keyframes drift {
+  from { transform: translateX(-14px); }
+  to   { transform: translateX(22px); }
+}
+
+/* 倒影中的缩略天体 */
+.mirror .sun { width: 88px; top: 4%; left: 13%; }
+.mirror .cloudA { top: 12%; left: 48%; }
+.mirror .cloudB { top: 22%; left: 76%; }
+.mirror .cloudC { top: 30%; left: 24%; }
+.mirror .cloud svg { opacity: 0.6; }
+
+@media (prefers-reduced-motion: reduce) {
+  .day .cloudA, .day .cloudB, .day .cloudC { animation: none; }
+}

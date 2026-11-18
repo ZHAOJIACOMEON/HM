@@ -1,0 +1,51 @@
+.root {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: var(--horizon);
+  bottom: 0;
+  z-index: 4;
+  overflow: hidden;
+  pointer-events: none;
+  opacity: 0.25;
+  filter: blur(1.5px) url(#waterWobble);
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, rgba(0, 0, 0, 0.55) 55%, transparent 96%);
+  mask-image: linear-gradient(to bottom, #000 0%, rgba(0, 0, 0, 0.55) 55%, transparent 96%);
+}
+
+.mirror {
+  position: absolute;
+  inset: 0;
+  transform: scaleY(0.75);
+  transform-origin: top center;
+}
+
+/* 天体的上下翻转 + 缓慢横移，形成水面里的倒影 */
+.mirror svg {
+  transform: scaleY(-1);
+  animation: sway 11s ease-in-out infinite alternate;
+}
+
+.stars {
+  position: absolute;
+  inset: 0 0 45% 0;
+  background-image:
+    radial-gradient(circle at 12% 18%, var(--star) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 27% 44%, var(--star) 0 1.4px, transparent 2px),
+    radial-gradient(circle at 41% 12%, var(--star) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 58% 38%, var(--star) 0 1.2px, transparent 2px),
+    radial-gradient(circle at 72% 16%, var(--star) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 88% 46%, var(--star) 0 1.3px, transparent 2px),
+    radial-gradient(circle at 34% 66%, var(--star) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 66% 72%, var(--star) 0 1px, transparent 1.5px);
+  animation: sway 15s ease-in-out infinite alternate-reverse;
+}
+
+@keyframes sway {
+  from { translate: -10px 0; }
+  to   { translate: 14px 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mirror svg, .stars { animation: none; }
+}

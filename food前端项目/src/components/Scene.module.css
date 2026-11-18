@@ -1,0 +1,84 @@
+.root {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.defs { position: absolute; width: 0; height: 0; pointer-events: none; }
+
+.sky {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: linear-gradient(180deg, var(--sky-top) 0%, var(--sky-bottom) 62%, var(--sky-bottom) 100%);
+}
+
+.canvasLayer {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  opacity: 1;
+  transition: opacity 800ms ease-in-out;
+}
+.dayCanvas { opacity: 0.42; }
+
+.skyHit {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 61%;
+  z-index: 5;
+}
+
+.hint {
+  position: absolute;
+  left: 50%;
+  bottom: 88px;
+  transform: translateX(-50%);
+  z-index: 26;
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  color: var(--ink-soft);
+  pointer-events: none;
+  animation: hintBreathe 4s ease-in-out infinite;
+}
+
+.hintHidden { opacity: 0 !important; }
+
+@keyframes hintBreathe {
+  0%, 100% { opacity: 0.5; }
+  50%      { opacity: 0.95; }
+}
+
+/* 从折角扩散的圆形擦除遮罩 */
+.wipe {
+  position: absolute;
+  inset: 0;
+  z-index: 22;
+  pointer-events: none;
+  background: linear-gradient(180deg, var(--sky-top) 0%, var(--sky-bottom) 100%);
+  clip-path: circle(0% at 0% 0%);
+  animation: wipeOut 800ms ease-in-out both;
+}
+.wipe::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: var(--horizon);
+  bottom: 0;
+  background: linear-gradient(180deg, var(--lake-top), var(--lake-bottom));
+}
+
+@keyframes wipeOut {
+  from { clip-path: circle(0% at 0% 0%); }
+  to   { clip-path: circle(150% at 0% 0%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hint, .wipe { animation: none; }
+  .wipe { display: none; }
+}

@@ -1,0 +1,94 @@
+.root {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  touch-action: none;
+  cursor: grab;
+  z-index: 2;
+  transition: filter 300ms ease-out;
+}
+
+.dragging { cursor: grabbing; filter: drop-shadow(0 0 10px var(--glow)); z-index: 5; }
+
+/* 实心星星：12px 繁星尺寸 + 微光呼吸 + 轻微缩放闪烁，每颗按 id 错峰 */
+.starButton {
+  position: relative;
+  display: block;
+  width: 12px;
+  height: 12px;
+  animation: starTwinkle 2.8s ease-in-out infinite alternate;
+}
+/* 星星很小，外扩一块隐形热区保证可点可拖 */
+.starButton::after {
+  content: '';
+  position: absolute;
+  inset: -9px;
+}
+@keyframes starTwinkle {
+  from { transform: scale(0.9); }
+  to   { transform: scale(1); }
+}
+
+.star {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 0 4px var(--glow));
+  animation: starGlow 2.8s ease-in-out infinite alternate;
+}
+@keyframes starGlow {
+  from { filter: drop-shadow(0 0 2px var(--glow)); }
+  to   { filter: drop-shadow(0 0 8px var(--glow)); }
+}
+.root:hover .star { transform: rotate(9deg) scale(1.08); transition: transform 260ms var(--ease-bounce); }
+
+/* 闪烁小星光（随星星同步缩小） */
+.sparkle {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  opacity: 0;
+  animation: sparkleBlink 2.2s ease-in-out infinite;
+}
+.sparkleA { top: -4px; right: -3px; }
+.sparkleB { bottom: -2px; left: -5px; width: 5px; height: 5px; animation-delay: 1.2s; }
+@keyframes sparkleBlink {
+  0%, 100% { opacity: 0; transform: scale(0.4) rotate(0deg); }
+  50%      { opacity: 0.9; transform: scale(1) rotate(24deg); }
+}
+
+/* 名字标签：常显，名字来自查询列表接口（query_all_food） */
+.label {
+  display: inline-block;
+  min-width: 40px;
+  max-width: 120px;
+  text-align: center;
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--ink);
+  letter-spacing: 0.05em;
+  outline: none;
+  caret-color: var(--accent);
+  white-space: nowrap;
+  text-shadow: 0 1px 6px rgba(4, 8, 24, 0.55);
+}
+.root.dragging .label { opacity: 0.85; }
+
+/* 删除小叉：悬停/编辑态浮现，手绘曲线 × */
+
+@media (prefers-reduced-motion: reduce) {
+  .root:hover .star { transform: none; }
+
+.sinking {
+  pointer-events: none;
+  animation: dissolve 500ms ease-in both;
+}
+
+@keyframes dissolve {
+  from { opacity: 1; filter: blur(0); }
+  to   { opacity: 0; filter: blur(4px); }
+}
+  .starButton, .star, .sparkle { animation: none; }
+  .sparkle { opacity: 0.6; }
+}

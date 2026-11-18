@@ -1,0 +1,92 @@
+/* ============================================================
+   Design Tokens · 星湖盲盒
+   颜色令牌用 @property 注册为 <color>，因此在 :root 上做一次
+   transition 即可让所有使用方（SVG stroke / fill / canvas 取色）
+   同步平滑过渡，无需给每个元素单独写 transition。
+   ============================================================ */
+
+@property --sky-top      { syntax: '<color>'; inherits: true; initial-value: #070B1C; }
+@property --sky-bottom   { syntax: '<color>'; inherits: true; initial-value: #1B2A4A; }
+@property --star         { syntax: '<color>'; inherits: true; initial-value: #FFF7D6; }
+@property --lake-top     { syntax: '<color>'; inherits: true; initial-value: #101C36; }
+@property --lake-bottom  { syntax: '<color>'; inherits: true; initial-value: #0A1226; }
+@property --line         { syntax: '<color>'; inherits: true; initial-value: #F2F0E9; }
+@property --line-soft    { syntax: '<color>'; inherits: true; initial-value: rgba(242, 240, 233, 0.42); }
+@property --line-faint   { syntax: '<color>'; inherits: true; initial-value: rgba(242, 240, 233, 0.16); }
+@property --accent       { syntax: '<color>'; inherits: true; initial-value: #FFC857; }
+@property --accent2      { syntax: '<color>'; inherits: true; initial-value: #7FD1C1; }
+@property --ink          { syntax: '<color>'; inherits: true; initial-value: #F2F0E9; }
+@property --ink-soft     { syntax: '<color>'; inherits: true; initial-value: rgba(242, 240, 233, 0.56); }
+@property --cloud        { syntax: '<color>'; inherits: true; initial-value: #F2F0E9; }
+@property --glow         { syntax: '<color>'; inherits: true; initial-value: rgba(255, 200, 87, 0.30); }
+@property --shadow-ink   { syntax: '<color>'; inherits: true; initial-value: rgba(0, 0, 0, 0.42); }
+
+:root {
+  /* 静态设计常量 */
+  --font-hand: "LXGW WenKai", "霞鹜文楷", "Kaiti SC", "STKaiti", cursive, system-ui;
+  --font-num: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --stroke-w: 2px;
+  --stroke-w-thin: 1px;
+  --horizon: 62%;          /* 地平线：画面高度的 62%（湖面在此处开始） */
+  --horizon-bend: 3vh;     /* 地平线弧度：中间比两侧低多少 */
+  --dur-theme: 800ms;
+  --dur-wipe: 800ms;
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-soft: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* 主题色 */
+  --sky-top: #070B1C;
+  --sky-bottom: #1B2A4A;
+  --star: #FFF7D6;
+  --lake-top: #101C36;
+  --lake-bottom: #0A1226;
+  --line: #F2F0E9;
+  --line-soft: rgba(242, 240, 233, 0.42);
+  --line-faint: rgba(242, 240, 233, 0.16);
+  --accent: #FFC857;
+  --accent2: #7FD1C1;
+  --ink: #F2F0E9;
+  --ink-soft: rgba(242, 240, 233, 0.56);
+  --cloud: #F2F0E9;
+  --glow: rgba(255, 200, 87, 0.30);
+  --shadow-ink: rgba(0, 0, 0, 0.42);
+
+  transition:
+    --sky-top var(--dur-theme) ease-in-out,
+    --sky-bottom var(--dur-theme) ease-in-out,
+    --star var(--dur-theme) ease-in-out,
+    --lake-top var(--dur-theme) ease-in-out,
+    --lake-bottom var(--dur-theme) ease-in-out,
+    --line var(--dur-theme) ease-in-out,
+    --line-soft var(--dur-theme) ease-in-out,
+    --line-faint var(--dur-theme) ease-in-out,
+    --accent var(--dur-theme) ease-in-out,
+    --accent2 var(--dur-theme) ease-in-out,
+    --ink var(--dur-theme) ease-in-out,
+    --ink-soft var(--dur-theme) ease-in-out,
+    --cloud var(--dur-theme) ease-in-out,
+    --glow var(--dur-theme) ease-in-out,
+    --shadow-ink var(--dur-theme) ease-in-out;
+}
+
+:root[data-theme='day'] {
+  --sky-top: #FDF6E3;
+  --sky-bottom: #BFE3F0;
+  --star: #FFFFFF;
+  --lake-top: #A8DADC;
+  --lake-bottom: #86C5D8;
+  --line: #2F3438;
+  --line-soft: rgba(47, 52, 56, 0.46);
+  --line-faint: rgba(47, 52, 56, 0.18);
+  --accent: #FF9F5A;
+  --accent2: #4EA8DE;
+  --ink: #2F3438;
+  --ink-soft: rgba(47, 52, 56, 0.62);
+  --cloud: #FFFFFF;
+  --glow: rgba(255, 159, 90, 0.30);
+  --shadow-ink: rgba(47, 52, 56, 0.20);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { transition-duration: 1ms !important; }
+}

@@ -1,0 +1,57 @@
+.root {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 96px;
+  height: 96px;
+  z-index: 30;
+  border-radius: 0 0 60% 0;
+}
+
+.svg { width: 96px; height: 96px; overflow: visible; }
+
+.muted { opacity: 0; pointer-events: none; transition: opacity 300ms ease-out; }
+
+.flap {
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: transform 320ms var(--ease-bounce);
+}
+.root:hover .flap { transform: rotate(-6deg) scale(1.06); }
+
+.shade { pointer-events: none; }
+
+.hint {
+  position: absolute;
+  top: 72px;
+  left: 76px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--accent);
+  letter-spacing: 0.14em;
+  opacity: 0;
+  pointer-events: none;
+}
+.arrow { width: 40px; height: 16px; }
+
+/* 首次引导：3.5s 一轮，直到用户点过一次 */
+.guide .flap { animation: guideFlap 3.5s ease-in-out infinite; }
+.guide .hint { animation: guideHint 3.5s ease-in-out infinite; }
+
+@keyframes guideFlap {
+  0%    { transform: rotate(-6deg) scale(1.08); }
+  11.4% { transform: rotate(0deg) scale(1); animation-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1); }
+  100%  { transform: rotate(0deg) scale(1); }
+}
+@keyframes guideHint {
+  0%, 17%   { opacity: 0; transform: translateX(6px); }
+  20%, 45%  { opacity: 1; transform: translateX(0); }
+  50%, 100% { opacity: 0; transform: translateX(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .guide .flap, .guide .hint { animation: none; }
+  .guide .hint { opacity: 1; }
+}

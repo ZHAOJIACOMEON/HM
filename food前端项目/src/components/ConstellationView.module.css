@@ -1,0 +1,75 @@
+.entry {
+  position: absolute;
+  top: 26px;
+  right: 30px;
+  width: 40px;
+  height: 40px;
+  z-index: 25;
+  opacity: 0.78;
+  cursor: pointer;
+  /* 呼吸微光 + 轻微浮动，像纸飞机悬在空中，引导点击 */
+  animation: planeGlow 2.6s ease-in-out infinite alternate, planeFloat 4.2s ease-in-out infinite;
+  transition: opacity 300ms ease-out, transform 300ms var(--ease-bounce);
+}
+.entry:hover {
+  opacity: 1;
+  transform: rotate(-8deg) translate(3px, -3px) scale(1.12);
+  animation-duration: 1.4s, 2.6s;
+}
+.entryOpen {
+  opacity: 1;
+  animation: none;
+}
+.entry svg { width: 100%; height: 100%; }
+
+@keyframes planeGlow {
+  from { filter: drop-shadow(0 0 2px rgba(255, 214, 130, 0.18)); }
+  to   { filter: drop-shadow(0 0 8px rgba(255, 214, 130, 0.55)); }
+}
+
+@keyframes planeFloat {
+  0%, 100% { translate: 0 0; }
+  50% { translate: -3px 3px; }
+}
+
+.view {
+  position: absolute;
+  inset: 0;
+  z-index: 15;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(14px);
+  background:
+    radial-gradient(circle at 18% 22%, var(--star) 0 1px, transparent 1.6px),
+    radial-gradient(circle at 62% 12%, var(--star) 0 1px, transparent 1.6px),
+    radial-gradient(circle at 84% 34%, var(--star) 0 1px, transparent 1.6px),
+    radial-gradient(circle at 36% 48%, var(--star) 0 1px, transparent 1.6px),
+    linear-gradient(180deg, var(--sky-top) 0%, var(--sky-bottom) 100%);
+  transition: opacity 400ms ease-out, transform 400ms ease-out, visibility 400ms;
+}
+.open { opacity: 1; visibility: visible; transform: translateY(0); }
+
+.lines { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+
+.seed {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  margin: -7px 0 0 -7px;
+  border: 1px solid var(--accent);
+  transform: rotate(45deg);
+  pointer-events: none;
+  animation: seedSink 900ms ease-in both;
+}
+
+@keyframes seedSink {
+  0%   { opacity: 0; transform: rotate(45deg) scale(0.5); }
+  15%  { opacity: 1; }
+  100% { opacity: 0; transform: rotate(135deg) scale(1.5) translate(18px, 45vh); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .seed { animation: fadeOut 300ms ease-out both; }
+  @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
+  .entry { animation: none; }
+}

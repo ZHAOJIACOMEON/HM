@@ -1,0 +1,143 @@
+/* 外层定位容器：承载遮罩与卡片 */
+.wrap {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+}
+
+/* 透明遮罩：点击便签之外的任意区域关闭 */
+.backdrop {
+  position: absolute;
+  inset: 0;
+  cursor: pointer;
+}
+
+.card {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: clamp(280px, 28vw, 360px);
+  cursor: pointer;
+  transform: translate(-50%, -50%) rotate(-1.8deg);
+  filter: drop-shadow(0 14px 26px rgba(4, 8, 24, 0.45));
+  animation: rise 600ms var(--ease-bounce) both;
+}
+
+.card:hover { transform: translate(-50%, calc(-50% - 6px)) rotate(-1.8deg); }
+.card { transition: transform 240ms ease-out; }
+
+/* 手绘纸片背景，铺满容器 */
+.paper {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* 胶带：45° 斜贴在左上角 */
+.tape {
+  position: absolute;
+  left: -24px;
+  top: 26px;
+  width: 88px;
+  height: 22px;
+  transform: rotate(-45deg);
+  background: rgba(255, 205, 110, 0.42);
+  box-shadow: 0 1px 2px rgba(58, 52, 39, 0.12);
+}
+
+/* 内容层：竖向排布，权重自上而下递减 */
+.body {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 42px 34px 26px;
+  text-align: center;
+}
+
+/* 邮戳式小标签：最轻量级 */
+.stamp {
+  display: inline-block;
+  padding: 2px 9px;
+  border: 1px dashed rgba(58, 52, 39, 0.32);
+  border-radius: 3px;
+  transform: rotate(-2.4deg);
+  font-size: 10px;
+  letter-spacing: 0.24em;
+  color: rgba(58, 52, 39, 0.5);
+}
+
+/* 礼物名：绝对主角 */
+.name {
+  position: relative;
+  margin-top: 10px;
+  font-size: clamp(28px, 2.8vw, 38px);
+  line-height: 1.45;
+  color: #3A3427;
+  letter-spacing: 0.08em;
+  transform: rotate(0.6deg);
+}
+
+/* 名字下的手绘波浪线 */
+.scribble {
+  display: block;
+  width: 72%;
+  margin: 2px auto 0;
+  overflow: visible;
+}
+
+/* 心情文案：次级，颜色更浅 */
+.quote {
+  margin-top: 14px;
+  font-size: 13px;
+  line-height: 1.9;
+  color: rgba(58, 52, 39, 0.6);
+  letter-spacing: 0.1em;
+  transform: rotate(-0.5deg);
+}
+
+/* 底部信息行：最弱层级 */
+.foot {
+  margin-top: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  color: rgba(58, 52, 39, 0.46);
+}
+.foot i {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: rgba(58, 52, 39, 0.3);
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translate(-50%, -44%) rotate(1.2deg) scale(0.82); }
+  to   { opacity: 1; transform: translate(-50%, -50%) rotate(-1.8deg) scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card { animation: none; opacity: 1; }
+}
+
+/* 「再抽一次」按钮：便签底部的小手写操作 */
+.redraw {
+  padding: 2px 4px;
+  font: inherit;
+  letter-spacing: inherit;
+  color: rgba(58, 52, 39, 0.78);
+  background: transparent;
+  border: none;
+  border-bottom: 1px dashed rgba(58, 52, 39, 0.5);
+  cursor: pointer;
+  transition: color 200ms ease-out, transform 200ms var(--ease-bounce);
+}
+.redraw:hover {
+  color: #B8860B;
+  border-bottom-color: #B8860B;
+  transform: rotate(-1deg);
+}

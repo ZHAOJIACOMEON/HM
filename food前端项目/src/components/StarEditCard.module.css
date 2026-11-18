@@ -1,0 +1,178 @@
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background: rgba(6, 10, 26, 0.35);
+  backdrop-filter: blur(2px);
+  animation: fadeIn 260ms ease-out both;
+}
+
+.card {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  z-index: 41;
+  width: clamp(300px, 30vw, 360px);
+  transform: translate(-50%, -50%) rotate(-1.4deg);
+  cursor: default;
+  animation: pop 520ms var(--ease-bounce) both;
+}
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes pop {
+  from { opacity: 0; transform: translate(-50%, -46%) rotate(-1.4deg) scale(0.86); }
+  to   { opacity: 1; transform: translate(-50%, -50%) rotate(-1.4deg) scale(1); }
+}
+
+/* 手绘便签纸底 */
+.paper {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  filter: drop-shadow(0 12px 22px rgba(4, 8, 24, 0.45));
+}
+
+/* 45° 斜贴的左上角胶带 */
+.tape {
+  position: absolute;
+  top: 6px;
+  left: 30px;
+  width: 84px;
+  height: 22px;
+  z-index: 2;
+  background: rgba(255, 255, 255, 0.5);
+  border-left: 1px dashed rgba(255, 255, 255, 0.65);
+  border-right: 1px dashed rgba(255, 255, 255, 0.65);
+  transform: rotate(-45deg);
+  transform-origin: center;
+  pointer-events: none;
+}
+
+.body {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 34px 32px 22px;
+  text-align: center;
+}
+
+.stamp {
+  display: inline-block;
+  padding: 3px 12px;
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  color: rgba(58, 52, 39, 0.72);
+  border: 1px dashed rgba(58, 52, 39, 0.45);
+  border-radius: 3px 10px 4px 9px;
+  transform: rotate(-1.2deg);
+}
+
+.rows {
+  width: 100%;
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 10px;
+  text-align: left;
+}
+
+.key {
+  flex: none;
+  width: 34px;
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  color: rgba(58, 52, 39, 0.62);
+}
+
+.input {
+  flex: 1;
+  min-width: 0;
+  padding: 3px 2px;
+  font-size: 15px;
+  color: #3A3427;
+  background: transparent;
+  border: none;
+  border-bottom: 1.4px dashed rgba(58, 52, 39, 0.45);
+  outline: none;
+  caret-color: #B8860B;
+  transition: border-color 200ms ease-out;
+}
+.input:focus { border-bottom-color: #B8860B; }
+
+.priceWrap { display: flex; align-items: baseline; gap: 3px; }
+.yen { font-size: 13px; font-style: normal; color: rgba(58, 52, 39, 0.62); }
+.inputPrice { width: 64px; flex: none; }
+
+/* 偏好分段：喜欢 / 不喜欢 */
+.segment { display: flex; gap: 8px; }
+.segmentItem {
+  padding: 3px 14px;
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  color: rgba(58, 52, 39, 0.55);
+  border: 1px dashed rgba(58, 52, 39, 0.36);
+  border-radius: 11px 4px 10px 5px;
+  cursor: pointer;
+  transition: background 200ms ease-out, color 200ms ease-out, transform 200ms var(--ease-bounce);
+}
+.segmentItem:hover { transform: rotate(-1deg); }
+.segmentOn {
+  color: #3A3427;
+  border-style: solid;
+  border-color: rgba(58, 52, 39, 0.7);
+  background: rgba(255, 255, 255, 0.55);
+}
+
+.error {
+  margin-top: 10px;
+  font-size: 12px;
+  color: #C0392B;
+  letter-spacing: 0.08em;
+  transform: rotate(-0.6deg);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.action {
+  padding: 7px 18px;
+  font-size: 13px;
+  letter-spacing: 0.14em;
+  color: #3A3427;
+  cursor: pointer;
+  transition: transform 220ms var(--ease-bounce), background 220ms ease-out;
+}
+.action:hover { transform: rotate(-1.2deg) translateY(-2px); }
+.actionGhost {
+  background: transparent;
+  border: 1px dashed rgba(58, 52, 39, 0.45);
+  border-radius: 12px 5px 11px 6px;
+}
+.actionDanger:hover { color: #C0392B; border-color: rgba(192, 57, 43, 0.6); }
+.actionSolid {
+  background: rgba(255, 255, 255, 0.6);
+  border: 1.4px solid rgba(58, 52, 39, 0.65);
+  border-radius: 5px 12px 6px 11px;
+}
+.actionSolid:hover { background: rgba(255, 255, 255, 0.85); }
+
+@media (prefers-reduced-motion: reduce) {
+  .card { animation: none; }
+  .backdrop { animation: none; }
+  .action, .segmentItem:hover { transform: none; }
+}
