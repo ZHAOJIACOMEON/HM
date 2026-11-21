@@ -1,7 +1,7 @@
 import type { Gift, NewGiftInput, RawFood } from '../types'
 import { parseWeight } from './random'
 
-/** 后端地址：http://localhost:8000（可用 VITE_API_BASE 覆盖） */
+/** 后端地址：http://localhost:9000（可用 VITE_API_BASE 覆盖） */
 export const API_BASE = (import.meta.env.VITE_API_BASE || 'http://localhost:9000').replace(/\/$/, '')
 
 const TIMEOUT = 6000

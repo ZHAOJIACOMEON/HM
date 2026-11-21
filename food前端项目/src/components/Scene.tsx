@@ -19,7 +19,7 @@ interface Props {
   children: ReactNode
 }
 
-/** 全局 SVG 滤镜：手绘抖动 / 暖光 / 水面位移 */
+/** 全局 SVG 滤镜：手绘抖动与暖光 */
 function Filters() {
   return (
     <svg className={s.defs} aria-hidden="true">
@@ -31,13 +31,6 @@ function Filters() {
         <filter id="softGlow" x="-80%" y="-80%" width="260%" height="260%">
           <feGaussianBlur stdDeviation="5" result="blur" />
           <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
-        </filter>
-        <filter id="waterWobble" x="-10%" y="-20%" width="120%" height="140%">
-          <feTurbulence type="fractalNoise" baseFrequency="0.012 0.055" numOctaves="2" seed="3" result="water">
-            <animate attributeName="baseFrequency" dur="14s" repeatCount="indefinite"
-              values="0.012 0.055; 0.016 0.044; 0.012 0.055" />
-          </feTurbulence>
-          <feDisplacementMap in="SourceGraphic" in2="water" scale="10" xChannelSelector="R" yChannelSelector="G" />
         </filter>
       </defs>
     </svg>

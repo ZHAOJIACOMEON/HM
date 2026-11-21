@@ -6,9 +6,9 @@ export default defineConfig({
         port: 5173,
         proxy: {
             // 可选：开发时用 /api 代理后端，避免跨域。
-            // 默认前端直接请求 VITE_API_BASE（http://localhost:8000）。
+            // 默认前端直接请求 VITE_API_BASE（http://localhost:9000）。
             '/api': {
-                target: 'http://localhost:8000',
+                target: 'http://localhost:9000',
                 changeOrigin: true,
                 rewrite: function (path) { return path.replace(/^\/api/, ''); },
             },

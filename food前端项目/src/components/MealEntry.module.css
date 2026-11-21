@@ -139,7 +139,7 @@
   letter-spacing: 0.12em;
   color: rgba(58, 52, 39, 0.55);
   border: 1px dashed rgba(58, 52, 39, 0.36);
-  border-radius: 11px 4px 10px 5px;
+  border-radius: 12px;
   cursor: pointer;
   transition: background 200ms ease-out, color 200ms ease-out, transform 200ms var(--ease-bounce);
 }
@@ -163,7 +163,7 @@
   display: inline-block;
   padding: 2px 9px;
   border: 1px dashed rgba(58, 52, 39, 0.32);
-  border-radius: 3px;
+  border-radius: 8px;
   transform: rotate(-2.2deg);
   font-size: 10px;
   letter-spacing: 0.24em;
@@ -206,13 +206,13 @@
 .action:disabled { opacity: 0.5; transform: none; cursor: pointer; }
 .actionGhost {
   border: 1px dashed rgba(58, 52, 39, 0.42);
-  border-radius: 14px 4px 13px 5px;
+  border-radius: 14px;
   background: transparent;
   color: rgba(58, 52, 39, 0.62);
 }
 .actionSolid {
   border: 1.4px solid rgba(58, 52, 39, 0.6);
-  border-radius: 5px 14px 5px 13px;
+  border-radius: 14px;
   background: rgba(255, 200, 87, 0.28);
 }
 

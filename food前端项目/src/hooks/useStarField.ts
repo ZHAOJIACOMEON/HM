@@ -46,7 +46,7 @@ interface Options {
 }
 
 /**
- * L1 星空引擎：静态星点 + 涟漪，单 canvas / 单 rAF。
+ * L1 星空引擎：静态星点 + 涟漪，单 canvas，最多 30fps。
  * 落星粒子已迁移到 tsparticles（StarParticles.tsx），此处只负责
  * 背景星点闪烁、涟漪池与主题重绘。涟漪用固定池复用，超出上限覆盖最旧的。
  */
@@ -70,7 +70,7 @@ export function useStarField(canvasRef: RefObject<HTMLCanvasElement>, { theme, s
     let w = 0
     let h = 0
     let raf = 0
-    let frameCount = 0
+    let lastFrameAt = 0
     let starColor: [number, number, number] = [255, 247, 214]
     let accentColor: [number, number, number] = [127, 209, 193]
 
@@ -85,7 +85,7 @@ export function useStarField(canvasRef: RefObject<HTMLCanvasElement>, { theme, s
 
     function buildDots() {
       dots.length = 0
-      const count = Math.min(110, Math.round((w * h) / 16000))
+      const count = Math.min(80, Math.round((w * h) / 20000))
       for (let i = 0; i < count; i += 1) {
         dots.push({
           x: rand(0, w),
@@ -102,7 +102,7 @@ export function useStarField(canvasRef: RefObject<HTMLCanvasElement>, { theme, s
     function resize() {
       w = window.innerWidth
       h = window.innerHeight
-      const dpr = Math.min(window.devicePixelRatio || 1, 2)
+      const dpr = Math.min(window.devicePixelRatio || 1, 1.5)
       canvas.width = Math.round(w * dpr)
       canvas.height = Math.round(h * dpr)
       canvas.style.width = `${w}px`
@@ -171,8 +171,11 @@ export function useStarField(canvasRef: RefObject<HTMLCanvasElement>, { theme, s
     }
 
     function frame(now: number) {
-      frameCount += 1
-      if (frameCount % 12 === 0) readColors()
+      if (now - lastFrameAt < 1000 / 30) {
+        raf = requestAnimationFrame(frame)
+        return
+      }
+      lastFrameAt = now
 
       ctx.clearRect(0, 0, w, h)
       drawStatic(now, false)
@@ -180,7 +183,10 @@ export function useStarField(canvasRef: RefObject<HTMLCanvasElement>, { theme, s
       if (!reducedRef.current) raf = requestAnimationFrame(frame)
     }
 
-    redrawRef.current = () => { drawOnce() }
+    redrawRef.current = () => {
+      readColors()
+      drawOnce()
+    }
     relightRef.current = () => {
       for (const d of dots) d.delay = performance.now() + Math.random() * 400
       if (reducedRef.current) return
@@ -208,7 +214,10 @@ export function useStarField(canvasRef: RefObject<HTMLCanvasElement>, { theme, s
 
     const onVisibility = () => {
       if (document.hidden) cancelAnimationFrame(raf)
-      else if (!reducedRef.current) raf = requestAnimationFrame(frame)
+      else if (!reducedRef.current) {
+        lastFrameAt = 0
+        raf = requestAnimationFrame(frame)
+      }
     }
 
     resize()

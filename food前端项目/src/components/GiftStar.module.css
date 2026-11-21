@@ -3,7 +3,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
+  gap: 4px;
   touch-action: none;
   cursor: grab;
   z-index: 2;
@@ -12,34 +12,50 @@
 
 .dragging { cursor: grabbing; filter: drop-shadow(0 0 10px var(--glow)); z-index: 5; }
 
-/* 实心星星：12px 繁星尺寸 + 微光呼吸 + 轻微缩放闪烁，每颗按 id 错峰 */
+/* 每条数据都是独立呼吸的星体，按 id 错峰，不在每帧变化滤镜。 */
 .starButton {
   position: relative;
   display: block;
-  width: 12px;
-  height: 12px;
-  animation: starTwinkle 2.8s ease-in-out infinite alternate;
+  width: 14px;
+  height: 14px;
+  animation: starTwinkle 2.2s ease-in-out infinite;
 }
-/* 星星很小，外扩一块隐形热区保证可点可拖 */
+.starButton::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 252, 235, 0.82) 0 4%, rgba(255, 222, 164, 0.35) 18%, rgba(170, 192, 255, 0.22) 42%, transparent 74%);
+  opacity: 0.18;
+  transform: translate(-50%, -50%) scale(0.58);
+  animation: auraBreath 2.2s ease-in-out infinite alternate;
+  animation-delay: inherit;
+  pointer-events: none;
+}
+/* 外扩隐形热区，方便点击和拖动 */
 .starButton::after {
   content: '';
   position: absolute;
-  inset: -9px;
+  inset: -10px;
 }
 @keyframes starTwinkle {
-  from { transform: scale(0.9); }
-  to   { transform: scale(1); }
+  0%, 100% { opacity: 0.58; transform: scale(0.72); }
+  50% { opacity: 1; transform: scale(1.24); }
+}
+@keyframes auraBreath {
+  from { opacity: 0.12; transform: translate(-50%, -50%) scale(0.58); }
+  to { opacity: 0.9; transform: translate(-50%, -50%) scale(1.36); }
 }
 
 .star {
+  position: relative;
+  z-index: 1;
   width: 100%;
   height: 100%;
-  filter: drop-shadow(0 0 4px var(--glow));
-  animation: starGlow 2.8s ease-in-out infinite alternate;
-}
-@keyframes starGlow {
-  from { filter: drop-shadow(0 0 2px var(--glow)); }
-  to   { filter: drop-shadow(0 0 8px var(--glow)); }
+  filter: drop-shadow(0 0 6px var(--glow)) drop-shadow(0 0 15px rgba(169, 190, 255, 0.3));
 }
 .root:hover .star { transform: rotate(9deg) scale(1.08); transition: transform 260ms var(--ease-bounce); }
 
@@ -62,23 +78,30 @@
 .label {
   display: inline-block;
   min-width: 40px;
-  max-width: 120px;
+  max-width: 160px;
   text-align: center;
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1.5;
-  color: var(--ink);
+  color: rgba(226, 232, 250, 0.82);
   letter-spacing: 0.05em;
   outline: none;
   caret-color: var(--accent);
   white-space: nowrap;
-  text-shadow: 0 1px 6px rgba(4, 8, 24, 0.55);
+  text-shadow: 0 1px 7px rgba(4, 8, 24, 0.72), 0 0 12px rgba(169, 188, 255, 0.16);
 }
 .root.dragging .label { opacity: 0.85; }
 
 /* 删除小叉：悬停/编辑态浮现，手绘曲线 × */
 
-@media (prefers-reduced-motion: reduce) {
-  .root:hover .star { transform: none; }
+@media (max-width: 640px) {
+  .root { gap: 3px; }
+  .label {
+    max-width: min(120px, 32vw);
+    font-size: 11px;
+    line-height: 1.35;
+    white-space: normal;
+  }
+}
 
 .sinking {
   pointer-events: none;
@@ -89,6 +112,11 @@
   from { opacity: 1; filter: blur(0); }
   to   { opacity: 0; filter: blur(4px); }
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .root:hover .star { transform: none; }
+  .sinking { animation: dissolve 500ms ease-in both; }
   .starButton, .star, .sparkle { animation: none; }
+  .starButton::before { animation: none; opacity: 0.42; }
   .sparkle { opacity: 0.6; }
 }

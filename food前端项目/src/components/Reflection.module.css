@@ -8,7 +8,7 @@
   overflow: hidden;
   pointer-events: none;
   opacity: 0.25;
-  filter: blur(1.5px) url(#waterWobble);
+  filter: blur(0.8px);
   -webkit-mask-image: linear-gradient(to bottom, #000 0%, rgba(0, 0, 0, 0.55) 55%, transparent 96%);
   mask-image: linear-gradient(to bottom, #000 0%, rgba(0, 0, 0, 0.55) 55%, transparent 96%);
 }

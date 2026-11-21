@@ -30,7 +30,7 @@ export default function GiftStar({ gift, x, y, sinking, onClick, onDelete }: Pro
       <button
         type="button"
         className={s.starButton}
-        style={{ animationDelay: `${((gift.id * 0.6180339887) % 1) * 2800}ms` }}
+        style={{ animationDelay: `${((gift.id * 0.6180339887) % 1) * 2200}ms` }}
         aria-label={`星星 ${gift.name}，点击编辑`}
       >
         <svg viewBox="0 0 80 80" className={s.star} aria-hidden="true">

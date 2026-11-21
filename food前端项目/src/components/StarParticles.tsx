@@ -5,7 +5,6 @@ import Particles, { ParticlesProvider, useParticlesProvider } from '@tsparticles
 import type { Container, Engine, ISourceOptions } from '@tsparticles/engine'
 import { loadSlim } from '@tsparticles/slim'
 import { loadEmittersPlugin } from '@tsparticles/plugin-emitters'
-import { loadWobbleUpdater } from '@tsparticles/updater-wobble'
 import { horizonY } from '../hooks/useViewport'
 import type { Theme } from '../types'
 import s from './StarParticles.module.css'
@@ -25,7 +24,7 @@ interface Props {
  */
 function prefillBand(container: Container, day: boolean, starColor: string) {
   const { width, height } = container.canvas.size
-  const count = day ? 50 : 90
+  const count = day ? 32 : 56
   const ox = width * 0.02
   const oy = height * 0.03
   const k = 0.70710678 // √2/2
@@ -35,7 +34,7 @@ function prefillBand(container: Container, day: boolean, starColor: string) {
     const x = ox + t - jitter * k
     const y = oy + t + jitter * k
     if (y >= horizonY(x, width, height)) continue
-    const bright = i % 7 === 0
+    const bright = i % 9 === 0
     container.particles.addParticle(
       { x, y },
       bright
@@ -58,7 +57,6 @@ function useEngineInit() {
     await Promise.all([
       loadSlim(engine),
       loadEmittersPlugin(engine as Parameters<typeof loadEmittersPlugin>[0]),
-      loadWobbleUpdater(engine),
     ])
   }, [])
 }
@@ -101,7 +99,7 @@ export default function StarParticles({ theme, reduced, rippleRef }: Props) {
     const day = theme === 'day'
     return {
       fullScreen: { enable: false },
-      fpsLimit: 60,
+      fpsLimit: 30,
       detectRetina: true,
       background: { color: 'transparent' },
       particles: {
@@ -132,11 +130,6 @@ export default function StarParticles({ theme, reduced, rippleRef }: Props) {
           drift: 0,
           outModes: { default: 'destroy' },
         },
-        wobble: {
-          enable: true,
-          distance: 6,
-          speed: { angle: { min: 20, max: 40 }, move: { min: 3, max: 7 } },
-        },
       },
       emitters: [
         // 尘埃流：折纸左上角小区域喷洒（密度降低，粒子更分散）
@@ -145,14 +138,14 @@ export default function StarParticles({ theme, reduced, rippleRef }: Props) {
           direction: 'bottom-right',
           rate: {
             quantity: { min: 1, max: 2 },
-            delay: day ? { min: 0.16, max: 0.34 } : { min: 0.08, max: 0.18 },
+            delay: day ? { min: 0.24, max: 0.42 } : { min: 0.16, max: 0.28 },
           },
         },
         // 亮星：同源稀疏点缀，四角实心小星（与尘点同风格）
         {
           position: { x: { min: 0.5, max: 3 }, y: { min: 1, max: 3.5 } },
           direction: 'bottom-right',
-          rate: { quantity: 1, delay: day ? { min: 1.6, max: 3.2 } : { min: 0.8, max: 1.8 } },
+          rate: { quantity: 1, delay: day ? { min: 3, max: 5 } : { min: 1.6, max: 2.8 } },
           particles: {
             size: { value: { min: 2.2, max: 4.2 } },
             paint: {
@@ -167,10 +160,6 @@ export default function StarParticles({ theme, reduced, rippleRef }: Props) {
             move: {
               speed: day ? { min: 0.8, max: 1.5 } : { min: 1, max: 2 },
               drift: 0,
-            },
-            wobble: {
-              distance: 8,
-              speed: { angle: { min: 14, max: 26 }, move: { min: 4, max: 8 } },
             },
           },
         },
@@ -205,7 +194,7 @@ export default function StarParticles({ theme, reduced, rippleRef }: Props) {
         }
         c.particles.remove(p)
       }
-    }, 90)
+    }, 200)
     return () => window.clearInterval(timer)
   }, [reduced, rippleRef])
 
